@@ -1,6 +1,6 @@
 {
   "name": "@kudo-ci/android-jsc",
-  "version": "174650.0.2",
+  "version": "174650.0.3",
   "description": "JavaScriptCore r174650 for Android and built by clang",
   "main": "index.js",
   "scripts": {
