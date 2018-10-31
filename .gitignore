@@ -1,7 +1,9 @@
 .idea
+.gradle
 *.iml
 gen
 buck-out/
+build/
 .buckd/
 icu
 !icu/BUCK
@@ -10,3 +12,4 @@ jsc
 !jsc/extra_headers
 *.gz
 *.bz2
+dist/

@@ -1,0 +1,27 @@
+{
+  "name": "@kudo-ci/android-jsc",
+  "version": "174650.0.2",
+  "description": "JavaScriptCore r174650 for Android and built by clang",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kudo/android-jsc.git"
+  },
+  "keywords": [
+    "android",
+    "jsc",
+    "react-native"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Kudo/android-jsc/issues"
+  },
+  "homepage": "https://github.com/Kudo/android-jsc#readme",
+  "files": [
+    "dist"
+  ]
+}

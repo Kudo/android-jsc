@@ -63,7 +63,13 @@ cxx_library(
     # Disable icu collation and date formatting
     '-DUCONFIG_NO_COLLATION=1',
     '-DUCONFIG_NO_FORMATTING=1',
+
+    '-Wno-unused-local-typedef',
   ],
+  compiler_flags = [
+    '-Wno-tautological-unsigned-enum-zero-compare',
+  ],
+
   header_namespace = '',
   headers = subdir_glob([
     ('WTF', '*.h'),
@@ -1054,9 +1060,12 @@ cxx_library(
     '-DENABLE_LLINT=1',
     '-DINTPTR_MAX=LONG_MAX',
     '-DLOG_TAG="JavaScriptCore"',
+    '-Wno-unused-local-typedef',
+    '-Wno-unused-lambda-capture',
   ],
   compiler_flags = [
     '-fvisibility=hidden',
+    '-Wno-expansion-to-defined',
   ],
   header_namespace = '',
   exported_headers = JSC_HEADERS,
@@ -1065,6 +1074,10 @@ cxx_library(
     ('extra_headers', 'unicode/udat.h'),
   ]),
   srcs = JSC_SOURCES,
+  platform_srcs = [
+    ('armv7', ['log2.cpp']),
+    ('x86', ['log2.cpp']),
+  ],
   deps = [
     ':wtf',
     ':wtfcollation',
@@ -1120,6 +1133,10 @@ cxx_library(
     '-DENABLE_JIT=1',
     '-DENABLE_DFG_JIT=0',
     '-DENABLE_LLINT=1',
+  ],
+  compiler_flags = [
+    '-Wno-tautological-unsigned-enum-zero-compare',
+    '-Wno-expansion-to-defined',
   ],
   headers = JSCOFFSETEXTRACTOR_HEADERS,
   header_namespace = '',

@@ -1,0 +1,11 @@
+--- jsc/JavaScriptCore/assembler/ARM64Assembler.h.orig	2018-10-28 02:30:50.909224731 +0800
++++ jsc/JavaScriptCore/assembler/ARM64Assembler.h	2018-10-28 02:31:50.989224313 +0800
+@@ -2847,7 +2847,7 @@
+ #if OS(LINUX) && COMPILER(GCC)
+     static inline void linuxPageFlush(uintptr_t begin, uintptr_t end)
+     {
+-        __builtin___clear_cache(reinterpret_cast<void*>(begin), reinterpret_cast<void*>(end));
++        __builtin___clear_cache(reinterpret_cast<char*>(begin), reinterpret_cast<char*>(end));
+     }
+ #endif
+ 

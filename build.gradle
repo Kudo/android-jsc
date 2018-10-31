@@ -1,0 +1,59 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.4'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile "${rootDir}/AndroidManifest.xml"
+            jniLibs.srcDirs = ["${rootDir}/build/jni"]
+        }
+    }
+}
+
+dependencies {}
+
+apply plugin: 'maven'
+
+task createAAR(type: Upload) {
+    def distDir = "${rootDir}/dist"
+
+    def revision = project.findProperty("REVISION") ?: "".replaceAll("\\s", "")
+
+    project.group = "org.webkit"
+    project.version = "r${revision}"
+
+    configuration = configurations.archives
+    repositories.mavenDeployer {
+        repository url: "file://${distDir}"
+        pom.project {
+            name "android-jsc"
+            artifactId "android-jsc"
+            packaging "aar"
+        }
+    }
+}

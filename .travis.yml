@@ -2,13 +2,39 @@ dist: trusty
 sudo: required
 env:
   global:
-  - _JAVA_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-
+    - _JAVA_OPTIONS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+    - DOCKER_IMAGE="$DOCKER_USERNAME/android-jsc:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER"
+    - DOCKER_IMAGE_PARTIAL="$DOCKER_IMAGE-partial"
 language: c
-
 services:
   - docker
-
-script:
-- travis_wait 60 docker run --rm --name hei -v $PWD:/pwd -w /pwd gengjiawen/android-jsc:feature_abi_support /bin/sh -c "./fetch_sources.sh && buck build :android-jsc"
-
+jobs:
+  include:
+    - stage: Prepare docker builder
+      script:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - travis_wait 15 docker build -t $DOCKER_IMAGE_PARTIAL-builder .
+        - docker push $DOCKER_IMAGE_PARTIAL-builder
+        - exit 0
+    - stage: Build android-jsc armv7 x86
+      script:
+        - travis_wait 50 docker run -v $PWD:/pwd -w /pwd $DOCKER_IMAGE_PARTIAL-builder /bin/sh -c "cp -Rf /pwd /android-jsc && cd /android-jsc && ./fetch_sources.sh && ./build.sh 32"
+        - travis_wait 20 docker commit `docker ps -l -q` $DOCKER_IMAGE_PARTIAL-32bits
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker push $DOCKER_IMAGE_PARTIAL-32bits
+    - stage: Build android-jsc arm64 x86_64
+      script:
+        - travis_wait 50 docker run -v $PWD:/pwd -w /android-jsc $DOCKER_IMAGE_PARTIAL-32bits /bin/sh -c "./build.sh all && mkdir -p /pwd/build && cp -f buck-out/gen/android-jsc.aar /pwd/build/ && /pwd/repack.sh"
+        # - travis_wait 20 docker commit `docker ps -l -q` $DOCKER_IMAGE
+        # - mkdir -p outputs && echo 123 > outputs/123.txt
+        # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        # - docker push $DOCKER_IMAGE
+      deploy:
+        provider: npm
+        skip_cleanup: true
+        email: ckchien+npmci@gmail.com
+        api_key:
+          secure: tBSHAobh0mWzRQ6J63OTbgK0ySN1fQG2o4PpvQVBhZjI2mQRGp5z8NU3Q1j5pQR0n23JzIV32m5wbuCoif5STXG80yv2T0jIhk02ZqH08z/J6ibC5x04Nvueg6JXUh8pnyvawqTNf7xVyfeiM/pLtM00j5Dmjry0D2IFbaUZgn4cbvwIEq5ZvJLTYsiOkhwv9hY1Q4jQ64z5xhtiNVL1lrFQE+3akZZZPUeY8cRdXguBzFQiIiwavve1rCTiMCoebwxyFijayIiWXx9gBzHwVwU+P5k3NcWGYGQjZMGWzaxTclSWqhM07fVuRll/6+aaX2n1y7d4iV+CpGNXe2sVuahw4S+bd+LC8mM5YQu6xyT6CsdxugKmgDK914lvdtsYvxVhdSwBNeOZAMhqvCBKGZKbBtRrqxPRtKy1BxgNMVjWQXRLcz/+oe4WaCxAvcwhSjAl7ZgzJXYIn7YzKk6+KRz0chowk+bunDmTZItXIN0/gXNmVm+65hRjnHUBC5LPsSiHO/Kc0P0z6MX6iKlDXl11sk3L0Ap4TGU+r50fR91QD7H8126fI/z2WTXhT1O0BcHUN0UIGsAFf307TDbaqzskG/lBvBMPkdQfcxOaz8xtGoy6lKE3SK7WFvUlwxbpLhMXZtd7yF9fmru95Qn2rWQSE5I+171eq2p1CsYXsTY=
+        on:
+          repo: Kudo/android-jsc
+          branch: clang

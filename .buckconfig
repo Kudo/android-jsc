@@ -1,42 +1,21 @@
-[buildfile]
-    includes = //BUILD_DEFS
 [ndk]
     cpu_abis = armv7, arm64, x86, x86_64
-    gcc_version = 4.9
-    app_platform = android-21
-    cppflags = \
-        -std=gnu11 \
+    app_platform_per_cpu_abi = armv7 => android-16, arm64 => android-21, x86 => android-16, x86_64 => android-21
+    compiler = clang
+    cxx_runtime = libcxx
+    ndk_version = 17.2.4988734
+    extra_cxxflags = \
+        -std=c++11 \
         -Wall \
         -Werror \
         -g3 \
-        -DNEBUG \
-        -fstack-protector
-    cflags = \
-        -std=gnu11 \
-        -Wall \
-        -Werror \
-        -g3 \
-        -Wa,--noexecstack \
-        -fstack-protector \
-        -ffunction-sections \
-        -funwind-tables \
-        -fomit-frame-pointer \
-        -fno-strict-aliasing
-    cxxppflags = \
-        -std=gnu++11 \
-        -Wall \
-        -Werror \
-        -Wno-literal-suffix \
-        -g3 \
-        -DNEBUG \
-        -fstack-protector \
-        -fno-exceptions \
-        -fno-rtti
-    cxxflags = \
-        -std=gnu++11 \
-        -Wall \
-        -Werror \
-        -g3 \
+        -pthread \
+        -D_LIBCPP_HAS_THREAD_API_PTHREAD \
+        -Wno-tautological-constant-compare \
+        -Wno-null-dereference \
+        -Wno-undefined-var-template \
+        -Wno-inconsistent-missing-override \
+        -Wno-unused-lambda-capture \
         -Wa,--noexecstack \
         -fstack-protector \
         -ffunction-sections \
@@ -45,94 +24,13 @@
         -fno-strict-aliasing \
         -fno-exceptions \
         -fno-rtti
-    ldflags = \
-        -Wl,--build-id \
-        -Wl,-z,noexecstack \
-        -Wl,--gc-sections \
-        -Wl,-z,defs \
-        -Wl,-z,nocopyreloc \
-        -Wl,--as-needed
-    arm_cppflags = \
-        -mthumb \
-        -Os
-    arm_cflags = \
-        -mtune=xscale \
-        -msoft-float \
-        -mthumb \
-        -Os
-    arm_cxxppflags = \
-        -mthumb \
-        -Os
-    arm_cxxflags = \
-        -mtune=xscale \
-        -msoft-float \
-        -mthumb \
-        -Os
-    arm_ldflags = \
-        -Wl,--fix-cortex-a8
-    armv7_cppflags = \
-        -mfloat-abi=softfp \
-        -mthumb \
-        -Os
-    armv7_cflags = \
-        -finline-limit=64 \
-        -mfpu=vfpv3-d16 \
-        -mfloat-abi=softfp \
-        -mthumb \
-        -Os
-    armv7_cxxppflags = \
-        -mfloat-abi=softfp \
-        -mthumb \
-        -Os
-    armv7_cxxflags = \
-        -finline-limit=64 \
-        -mfpu=vfpv3-d16 \
-        -mfloat-abi=softfp \
-        -mthumb \
-        -Os
-    x86_64_cppflags = \
-        -O2
-    x86_64_cflags = \
-        -funswitch-loops \
-        -finline-limit=300 \
-        -O2
-    x86_64_cxxppflags = \
-        -O2
-    x86_64_cxxflags = \
-        -funswitch-loops \
-        -finline-limit=300 \
-        -O2
-    x86_cppflags = \
-        -O2
-    x86_cflags = \
-        -funswitch-loops \
-        -finline-limit=300 \
-        -O2
-    x86_cxxppflags = \
-        -O2
-    x86_cxxflags = \
-        -funswitch-loops \
-        -finline-limit=300 \
-        -O2
+    extra_ldflags = \
+        -lm
+
 [cxx]
     preprocess_mode = piped
-    cppflags = \
-        -std=gnu11 \
-        -pthread \
-        -O0 \
-        -g3
-    cflags = \
-        -std=gnu11 \
-        -pthread \
-        -O0 \
-        -g3
-    cxxppflags = \
-        -std=gnu++11 \
-        -pthread \
-        -O0 \
-        -g3
-    cxxflags = \
-        -std=gnu++11 \
-        -pthread \
-        -O0 \
-        -g3
+    cpp = /usr/bin/clang
+    cc = /usr/bin/clang
+    cxxpp = /usr/bin/clang++
+    cxx = /usr/bin/clang++
+    ld = /usr/bin/clang++

@@ -16,3 +16,6 @@ echo "set JSC"
 cp -r /trunk/Source/JavaScriptCore jsc
 cp -r /trunk/Source/WTF jsc
 
+echo "Apply patches"
+patch -p0 < patches/clang.patch
+patch -p0 < patches/log2.patch
